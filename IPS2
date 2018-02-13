@@ -1,0 +1,64 @@
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" 
+src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.min.css"/>
+ 
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.min.js"></script>
+
+Continent: <input type="text" id="State" >
+<input type="button" value="SEARCH!" onclick="LoadZipCodes($('#State').val());" >
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+<thead><th>Year</th><th>Make</th><th>Model</th><th>Type</th><th>Number</th><th>Owned</th><th>Software</th><th>Location</th><th>Details</th></thead>
+</table>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {  
+     var FirstDate;
+	});  
+
+function LoadZipCodes(state)
+{
+        var call = $.ajax({
+            url: "https://penskeracing.sharepoint.com/Restorations/_api/Web/Lists/GetByTitle('Vechiles')/items?$select=Year, Make,Model,VType,Ownedby,Location,Software,Number,Private&$filter=(Year eq '"+state+"')and(Private eq'No')&$top=5000",
+            type: "GET",
+            dataType: "json",
+            headers: {
+                Accept: "application/json;odata=verbose"
+            },
+				
+       
+        });
+        call.done(function (data,textStatus, jqXHR){
+
+            $('#example').dataTable({
+                "bDestroy": true,
+                "bProcessing": true,
+				"select": true,
+                "aaData": data.d.results,
+				 "aoColumns": [
+				  	{ "mData": "Year" },
+					{ "mData": "Make" },
+					{ "mData": "Model" },
+					{ "mData": "VType" },
+					{ "mData": "Number" },
+					{ "mData": "Ownedby" },
+					{ "mData": "Software" },
+					{ "mData": "Location" },
+					
+										 ]
+	              });
+				  
+		  var table = $('#example').DataTable();
+		  var data = table.row( 0 ).data();
+		  
+		
+        });
+        call.fail(function (jqXHR,textStatus,errorThrown){
+            alert("Error retrieving Tasks: " + jqXHR.responseText);
+        });
+}
+
+</script>
